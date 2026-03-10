@@ -1,0 +1,33 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    - name: weekw-w1-test
+      id: weekw-w1-test
+      uses: classroom-resources/autograding-io-grader@v1
+      with:
+        test-name: weekw-w1-test
+        setup-command: ''
+        command: python3 main.py
+        input: ''
+        expected-output: 총\s*결제\s*금액은\s*36000\s*원\s*입니다
+        comparison-method: regex
+        timeout: 1
+        max-score: 30
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        WEEKW-W1-TEST_RESULTS: "${{steps.weekw-w1-test.outputs.result}}"
+      with:
+        runners: weekw-w1-test
